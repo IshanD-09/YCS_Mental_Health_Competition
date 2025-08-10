@@ -123,13 +123,11 @@
 
             if (!userInput.value.trim()) return;
 
-            // Display user message
             const userMsg = document.createElement('div');
             userMsg.classList.add('message', 'user');
             userMsg.textContent = userInput.value;
             chat.appendChild(userMsg);
 
-            // Send to backend
             const response = await fetch('/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -137,16 +135,13 @@
             });
             const data = await response.json();
 
-            // Display bot message
             const botMsg = document.createElement('div');
             botMsg.classList.add('message', 'bot');
             botMsg.textContent = data.response;
             chat.appendChild(botMsg);
 
-            // Scroll to bottom
             chat.scrollTop = chat.scrollHeight;
 
-            // Clear input
             userInput.value = '';
         }
     </script>

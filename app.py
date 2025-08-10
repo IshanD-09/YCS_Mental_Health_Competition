@@ -17,7 +17,6 @@ def chat():
     if not user_message or not agent_name:
         return jsonify({'response': "Invalid input."}), 400
 
-    # Route to correct agent
     if agent_name == "therapist":
         ai_response = TherapyBot.respond(user_message)
     elif agent_name == "motivator":
