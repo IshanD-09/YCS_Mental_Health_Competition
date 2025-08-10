@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatly</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background-color: #343541;
+            color: #ececf1;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            padding: 12px 20px;
+            background-color: #202123;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #565869;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        select {
+            background-color: #40414f;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        #chat {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.4;
+        }
+
+        .user {
+            align-self: flex-end;
+            background-color: #10a37f;
+            color: white;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background-color: #40414f;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 12px;
+            background-color: #202123;
+            border-top: 1px solid #565869;
+        }
+
+        #user-input {
+            flex: 1;
+            resize: none;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+            background-color: #40414f;
+            color: white;
+        }
+
+        button {
+            background-color: #10a37f;
+            border: none;
+            color: white;
+            padding: 0 20px;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #0d8d6f;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AI Chat</h1>
+    </header>
+    <main id="chat"></main>
+    <div class="input-area">
+        <select id="agent">
+          <option value="therapist">TherapyBot</option>
+          <option value="motivator">MotivateBot</option>
+          <option value="vent">VentBot</option>
+          <option value="calm">CalmBot</option>
+        </select>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const chat = document.getElementById('chat');
+            const agent = document.getElementById('agent').value;
+
+            if (!userInput.value.trim()) return;
+
+            // Display user message
+            const userMsg = document.createElement('div');
+            userMsg.classList.add('message', 'user');
+            userMsg.textContent = userInput.value;
+            chat.appendChild(userMsg);
+
+            // Send to backend
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ agent: agent, message: userInput.value })
+            });
+            const data = await response.json();
+
+            // Display bot message
+            const botMsg = document.createElement('div');
+            botMsg.classList.add('message', 'bot');
+            botMsg.textContent = data.response;
+            chat.appendChild(botMsg);
+
+            // Scroll to bottom
+            chat.scrollTop = chat.scrollHeight;
+
+            // Clear input
+            userInput.value = '';
+        }
+    </script>
+</body>
+</html>
